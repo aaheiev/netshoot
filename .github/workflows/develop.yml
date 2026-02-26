@@ -52,4 +52,4 @@ jobs:
             --output "type=image,push=true" \
             --file ./Dockerfile \
             --tag aaheiev/netshoot:$RELEASE_VERSION \
-            --tag ghcr.io/$GITHUB_REPOSITORY:dev .
+            --tag aaheiev/netshoot:dev .
