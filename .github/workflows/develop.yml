@@ -10,27 +10,30 @@ jobs:
   buildx:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.ref }}
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64,amd64
-      -
-        name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
 
-      - name: Show version
+#      -
+#        name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
+#        with:
+#          platforms: arm64,amd64
+#      -
+#        name: Set up Docker Buildx
+#        id: buildx
+#        uses: docker/setup-buildx-action@v3
+#      -
+#        name: Available platforms
+#        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Set build version
         run: |
-          echo "Version: ${GITHUB_REF#refs/*/}"
+          VERSION=$(cat VERSION)
+          echo "Version: ${VERSION}"
+
+#      - name: Show version
+#        run: |
+#          echo "Version: ${GITHUB_REF#refs/*/}"
 
 #      - name: Set Release Tag Env
 #        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
