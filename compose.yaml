@@ -1,0 +1,11 @@
+# docker compose exec -ti netshoot zsh
+---
+services:
+  netshoot:
+    image:        docker.io/aaheiev/netshoot:1.0.1
+    platform:     linux/amd64
+    stdin_open:   true
+    tty:          true
+    build:
+      dockerfile: Dockerfile
+      context: .
