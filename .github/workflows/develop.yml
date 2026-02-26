@@ -51,6 +51,5 @@ jobs:
             --platform linux/amd64,linux/arm64 \
             --output "type=image,push=true" \
             --file ./Dockerfile \
-            --tag docker.io/aaheiev/netshoot:$GITHUB_SHA \
-            --tag docker.io/aaheiev/netshoot:$RELEASE_VERSION \
+            --tag aaheiev/netshoot:$RELEASE_VERSION \
             --tag ghcr.io/$GITHUB_REPOSITORY:dev .
