@@ -51,5 +51,5 @@ jobs:
             --platform linux/amd64,linux/arm64 \
             --output "type=image,push=true" \
             --file ./Dockerfile \
-            --tag aaheiev/netshoot:$RELEASE_VERSION \
+            --tag aaheiev/netshoot:$BUILD_VERSION \
             --tag aaheiev/netshoot:dev .
