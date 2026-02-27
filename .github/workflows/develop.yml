@@ -6,7 +6,7 @@ on:
       - dev
       - develop
 env:
-  CONTAINER_IMAGE_URL: aaheiev/netshoot
+  CONTAINER_IMAGE_URL: ${{ vars.CONTAINER_IMAGE_URL }}
 jobs:
   buildx:
     runs-on: ubuntu-latest
