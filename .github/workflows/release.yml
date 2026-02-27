@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set Build Version
+        id: version
+        run: |
+          RELEASE_VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && RELEASE_VERSION=$(echo $RELEASE_VERSION | sed -e 's/^v//')
+          RC_VERSION="${RELEASE_VERSION}-rc"
+          echo "RC_VERSION=$(echo $RC_VERSION)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(echo $RELEASE_VERSION)" >> $GITHUB_ENV         
+
+      - name: Login docker hub
+        env:
+          DOCKER_USER: ${{ vars.DOCKER_HUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Promote pre-release
+        run: |
+          docker pull ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }}
+          docker tag ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }} ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RELEASE_VERSION }}
+          docker tag ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }} ${{ vars.CONTAINER_IMAGE_URL }}:main
+          docker push ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RELEASE_VERSION }}
+          docker push ${{ vars.CONTAINER_IMAGE_URL }}:main

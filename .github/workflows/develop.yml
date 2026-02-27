@@ -1,0 +1,47 @@
+name: Develop
+
+on:
+  push:
+    branches:
+      - dev
+      - develop
+jobs:
+  buildx:
+    runs-on: ubuntu-latest
+    name: Build and Push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set build version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          BUILD_VERSION="${VERSION}-dev${{ github.run_number }}"
+          echo "BUILD_VERSION=$(echo $BUILD_VERSION)" >> $GITHUB_ENV
+          echo "BUILD_VERSION=$(echo $BUILD_VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Login docker hub
+        env:
+          DOCKER_USER: ${{ vars.DOCKER_HUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.CONTAINER_IMAGE_URL }}
+
+      - name: Update motd version
+        run: |
+          sed -i "s/^Version:.*/Version: ${{ env.BUILD_VERSION }}/" motd
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}

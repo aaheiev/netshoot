@@ -1,14 +1,16 @@
-FROM debian:stable-slim as fetcher
+FROM debian:stable-slim AS fetcher
 COPY build/fetch_binaries.sh /tmp/fetch_binaries.sh
 
+# hadolint ignore=DL3008,DL3015
 RUN apt-get update && apt-get install -y \
   curl \
   wget
 
 RUN /tmp/fetch_binaries.sh
 
-FROM alpine:3.23.2
+FROM alpine:3.23.3
 
+# hadolint ignore=DL3018
 RUN set -ex \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
@@ -73,6 +75,10 @@ RUN set -ex \
     perl-crypt-ssleay \
     perl-net-ssleay
 
+# Installing Azure CLI via pip
+# hadolint ignore=DL3013
+RUN pip3 install --no-cache-dir --break-system-packages azure-cli
+
 # Installing ctop - top-like container monitor
 COPY --from=fetcher /tmp/ctop /usr/local/bin/ctop
 
@@ -89,20 +95,23 @@ COPY --from=fetcher /tmp/grpcurl /usr/local/bin/grpcurl
 COPY --from=fetcher /tmp/fortio /usr/local/bin/fortio
 
 # Setting User and Home
+# hadolint ignore=DL3002
 USER root
 WORKDIR /root
-ENV HOSTNAME netshoot
+ENV HOSTNAME=netshoot
 
 # ZSH Themes
-RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
-RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+# hadolint ignore=DL4006
+RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh \
+  && git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" \
+  && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+
 COPY zshrc .zshrc
 COPY motd motd
 
 # Fix permissions for OpenShift and tshark
-RUN chmod -R g=u /root
-RUN chown root:root /usr/bin/dumpcap
+RUN chmod -R g=u /root \
+  && chown root:root /usr/bin/dumpcap
 
 # Running ZSH
 CMD ["zsh"]
