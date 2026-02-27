@@ -13,7 +13,7 @@ jobs:
     name: Build and Push
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set build version
         id: version
@@ -36,13 +36,10 @@ jobs:
         with:
           images: ${{ env.CONTAINER_IMAGE_URL }}
 
-      - name: Print output tags
-        run: echo "tags=${{ steps.meta.outputs.tags }}"
-
-#      - name: Build and push
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: .
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}
