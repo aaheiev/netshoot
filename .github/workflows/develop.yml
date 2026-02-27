@@ -5,8 +5,6 @@ on:
     branches:
       - dev
       - develop
-env:
-  CONTAINER_IMAGE_URL: ${{ vars.CONTAINER_IMAGE_URL }}
 jobs:
   buildx:
     runs-on: ubuntu-latest
@@ -34,12 +32,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.CONTAINER_IMAGE_URL }}
+          images: ${{ vars.CONTAINER_IMAGE_URL }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}
+          tags: ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}

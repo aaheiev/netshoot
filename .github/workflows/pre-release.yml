@@ -5,9 +5,6 @@ on:
     types:
       - prereleased
 
-env:
-  CONTAINER_IMAGE_URL: ${{ vars.CONTAINER_IMAGE_URL }}
-
 jobs:
   build:
     name: Create Pre-Release
@@ -33,7 +30,23 @@ jobs:
         with:
           dockerfile: Dockerfile
 
-      - name: Show version
+      - name: Login docker hub
+        env:
+          DOCKER_USER: ${{ vars.DOCKER_HUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
-          echo "Version: ${{ env.VERSION }}"
-          echo "RELEASE_VERSION: ${{ env.RELEASE_VERSION }}"
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.CONTAINER_IMAGE_URL }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}
