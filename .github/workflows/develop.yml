@@ -26,7 +26,7 @@ jobs:
 
       - name: Show version
         run: |
-          echo "Build Version: ${{ env.CONTAINER_IMAGE_URL }}:${BUILD_VERSION}"
+          echo "Build Version: ${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}"
 
       - name: Login docker hub
         env:
@@ -34,6 +34,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: "${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}"
 
 #      - name: Run Buildx
 #        run: |
