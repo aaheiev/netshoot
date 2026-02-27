@@ -16,17 +16,12 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set build version
+        id: version
         run: |
           VERSION=$(cat VERSION)
           BUILD_VERSION="${VERSION}-dev${{ github.run_number }}"
           echo "BUILD_VERSION=$(echo $BUILD_VERSION)" >> $GITHUB_ENV
           echo "BUILD_VERSION=$(echo $BUILD_VERSION)" >> $GITHUB_OUTPUT
-          echo "BUILD_VERSION=$(echo $BUILD_VERSION)"
-          echo "Build Version: ${BUILD_VERSION}"
-
-      - name: Show version
-        run: |
-          echo "Build Version: ${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}"
 
       - name: Login docker hub
         env:
@@ -41,19 +36,13 @@ jobs:
         with:
           images: ${{ env.CONTAINER_IMAGE_URL }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Print output tags
+        run: echo "tags=${{ steps.meta.outputs.tags }}"
 
-#      - name: Run Buildx
-#        run: |
-#          docker buildx build \
-#            --platform linux/amd64,linux/arm64 \
-#            --output "type=image,push=true" \
-#            --file ./Dockerfile \
-#            --tag aaheiev/netshoot:$BUILD_VERSION \
-#            --tag aaheiev/netshoot:dev .
+#      - name: Build and push
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: .
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
