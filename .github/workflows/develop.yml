@@ -34,6 +34,10 @@ jobs:
         with:
           images: ${{ vars.CONTAINER_IMAGE_URL }}
 
+      - name: Update motd version
+        run: |
+          sed -i "s/^Version:.*/Version: ${{ env.BUILD_VERSION }}/" motd
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
