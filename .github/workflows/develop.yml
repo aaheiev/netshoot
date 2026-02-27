@@ -34,11 +34,12 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}"
+          images: ${{ env.CONTAINER_IMAGE_URL }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
