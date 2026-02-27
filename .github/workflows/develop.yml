@@ -5,7 +5,8 @@ on:
     branches:
       - dev
       - develop
-
+env:
+  CONTAINER_IMAGE_URL: aaheiev/netshoot
 jobs:
   buildx:
     runs-on: ubuntu-latest
@@ -37,14 +38,14 @@ jobs:
 
       - name: Show version
         run: |
-          echo "Build Version: ${BUILD_VERSION}"
+          echo "Build Version: ${{ env.CONTAINER_IMAGE_URL }}:${BUILD_VERSION}"
 
-      - name: Login docker hub
-        env:
-          DOCKER_USER: ${{ vars.DOCKER_HUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        run: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+#      - name: Login docker hub
+#        env:
+#          DOCKER_USER: ${{ vars.DOCKER_HUB_USER }}
+#          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+#        run: |
+#            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
 #      - name: Run Buildx
 #        run: |
