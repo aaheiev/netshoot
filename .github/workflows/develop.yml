@@ -40,6 +40,14 @@ jobs:
         with:
           images: "${{ env.CONTAINER_IMAGE_URL }}:${{ env.BUILD_VERSION }}"
 
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
 #      - name: Run Buildx
 #        run: |
 #          docker buildx build \
