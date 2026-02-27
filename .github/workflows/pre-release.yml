@@ -1,0 +1,34 @@
+name: Pre-release
+
+on:
+  release:
+    types:
+      - prereleased
+
+env:
+  CONTAINER_IMAGE_URL: ${{ vars.CONTAINER_IMAGE_URL }}
+
+jobs:
+  build:
+    name: Create Pre-Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout code
+
+      - name: Set Build Version
+        id: version
+        run: |
+          RELEASE_VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && RELEASE_VERSION=$(echo $RELEASE_VERSION | sed -e 's/^v//')
+          VERSION="${RELEASE_VERSION}-rc"
+          echo "VERSION=$(echo $VERSION)" >> $GITHUB_ENV
+          echo "VERSION=$(echo $VERSION)" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=$(echo $RELEASE_VERSION)" >> $GITHUB_ENV         
+
+      - name: Show version
+        run: |
+          echo "Version: ${{ env.VERSION }}"
+          echo "RELEASE_VERSION: ${{ env.RELEASE_VERSION }}"

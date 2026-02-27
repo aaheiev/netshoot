@@ -1,6 +1,10 @@
 # JetBrains IDE
 .idea/
 
+# Temporary files and dirs
+.temp
+.tmp
+
 # macOS
 .DS_Store
 .AppleDouble
