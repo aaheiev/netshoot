@@ -1,4 +1,4 @@
-# GrandCentral Platform NetShoot 
+# NetShoot with azure cli 
 
 Based on [nicolaka-netshoot](https://github.com/nicolaka/netshoot)
 

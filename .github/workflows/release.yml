@@ -31,4 +31,6 @@ jobs:
         run: |
           docker pull ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }}
           docker tag ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }} ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RELEASE_VERSION }}
+          docker tag ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RC_VERSION }} ${{ vars.CONTAINER_IMAGE_URL }}:main
           docker push ${{ vars.CONTAINER_IMAGE_URL }}:${{ env.RELEASE_VERSION }}
+          docker push ${{ vars.CONTAINER_IMAGE_URL }}:main
